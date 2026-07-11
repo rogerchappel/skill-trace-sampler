@@ -1,0 +1,33 @@
+{
+  "name": "skill-trace-sampler",
+  "version": "0.1.0",
+  "description": "Sample agent run transcripts into safe skill fixture packs",
+  "type": "module",
+  "bin": {
+    "skill-trace-sampler": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "SKILL.md",
+    "docs",
+    "examples"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "test": "node --test dist/tests/*.test.js",
+    "smoke": "npm run build && node dist/cli.js --help && node dist/cli.js examples/sample.txt --format markdown",
+    "validate": "bash scripts/validate.sh"
+  },
+  "keywords": [
+    "agent-skill",
+    "cli",
+    "local-first",
+    "fixtures"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

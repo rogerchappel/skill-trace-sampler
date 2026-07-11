@@ -4,7 +4,7 @@
   "description": "Sample agent run transcripts into safe skill fixture packs",
   "type": "module",
   "bin": {
-    "skill-trace-sampler": "./dist/cli.js"
+    "skill-trace-sampler": "./dist/src/cli.js"
   },
   "files": [
     "dist",
@@ -17,7 +17,7 @@
     "build": "tsc -p tsconfig.json",
     "check": "tsc --noEmit -p tsconfig.json",
     "test": "node --test dist/tests/*.test.js",
-    "smoke": "npm run build && node dist/cli.js --help && node dist/cli.js examples/sample.txt --format markdown",
+    "smoke": "npm run build && node dist/src/cli.js --help && node dist/src/cli.js examples/sample.txt --format markdown",
     "validate": "bash scripts/validate.sh"
   },
   "keywords": [

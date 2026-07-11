@@ -1,8 +1,7 @@
 import type { TraceReport } from './types.js';
 
 export function toJson(report: TraceReport): string {
-  return `${JSON.stringify(report, null, 2)}
-`;
+  return `${JSON.stringify(report, null, 2)}\n`;
 }
 
 export function toMarkdown(report: TraceReport): string {
@@ -13,7 +12,5 @@ export function toMarkdown(report: TraceReport): string {
   for (const sample of report.samples) {
     lines.push(`- **${sample.category}** ${sample.source}:${sample.line} - ${sample.text}`);
   }
-  return `${lines.join('
-')}
-`;
+  return `${lines.join('\n')}\n`;
 }

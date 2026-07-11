@@ -2,13 +2,13 @@ import { redactLine } from './redact.js';
 import type { SampleCategory, TraceSample } from './types.js';
 
 const RULES: Array<[SampleCategory, RegExp]> = [
-  ['command', /(?:npm|pnpm|yarn|git|bash|node|python|pytest|cargo|go test)/],
-  ['file', /(?:^|\s)(?:[\w.-]+\/)+[\w.-]+\.(?:ts|js|md|json|py|go|rs|yml|yaml)/],
-  ['tool', /(?:tool|function|exec_command|apply_patch|read_mcp_resource|gh )/i],
-  ['approval', /(?:approve|approval|permission|consent|confirm)/i],
-  ['blocker', /(?:blocked|failed|error|cannot|timeout|denied)/i],
-  ['verification', /(?:test|check|build|smoke|validate|passed|pass)/i],
-  ['claim', /(?:done|implemented|fixed|created|updated|summary)/i]
+  ['command', new RegExp('\\\\b(?:npm|pnpm|yarn|git|bash|node|python|pytest|cargo|go test)\\\\b')],
+  ['file', /(?:^|\s)(?:[\w.-]+\/)+[\w.-]+\.(?:ts|js|md|json|py|go|rs|yml|yaml)\b/],
+  ['tool', new RegExp('\\\\b(?:tool|function|exec_command|apply_patch|read_mcp_resource|gh )\\\\b', 'i')],
+  ['approval', new RegExp('\\\\b(?:approve|approval|permission|consent|confirm)\\\\b', 'i')],
+  ['blocker', new RegExp('\\\\b(?:blocked|failed|error|cannot|timeout|denied)\\\\b', 'i')],
+  ['verification', new RegExp('\\\\b(?:test|check|build|smoke|validate|passed|pass)\\\\b', 'i')],
+  ['claim', new RegExp('\\\\b(?:done|implemented|fixed|created|updated|summary)\\\\b', 'i')]
 ];
 
 export function parseTranscript(source: string, text: string, maxPerCategory: number): { samples: TraceSample[]; redactions: string[]; warnings: string[] } {
@@ -16,8 +16,7 @@ export function parseTranscript(source: string, text: string, maxPerCategory: nu
   const redactions = new Set<string>();
   const warnings: string[] = [];
   const samples: TraceSample[] = [];
-  const lines = text.split(/?
-/);
+  const lines = text.split(/\r?\n/);
 
   lines.forEach((raw, index) => {
     const trimmed = raw.trim();

@@ -1,6 +1,6 @@
 const HOME_PATTERN = /\/Users\/[A-Za-z0-9._-]+|\/home\/[A-Za-z0-9._-]+/g;
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
-const TOKEN_PATTERN = /(?:sk|ghp|github_pat|xox[baprs])-?[A-Za-z0-9_\-]{12,}/g;
+const TOKEN_PATTERN = new RegExp('\\b(?:sk|ghp|github_pat|xox[baprs])[-_]?[A-Za-z0-9_\\-]{12,}\\b', 'g');
 
 export function redactLine(input: string): { text: string; notes: string[] } {
   const notes: string[] = [];

@@ -9,5 +9,6 @@ test('samples and redacts transcript evidence', async () => {
   assert.ok(report.samples.some((sample) => sample.category === 'verification'));
   assert.ok(report.redactions.includes('email'));
   assert.ok(report.redactions.includes('home-path'));
+  assert.ok(report.redactions.includes('token'));
   assert.match(toMarkdown(report), /Skill Trace Samples/);
 });

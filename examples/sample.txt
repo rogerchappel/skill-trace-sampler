@@ -1,0 +1,7 @@
+User approved dry-run only for GitHub issue drafting.
+$ npm test
+exec_command ran git status --short
+Updated docs/PRD.md and src/index.ts
+Build passed after npm run check
+Blocked on external Slack write: approval denied
+Final summary: implemented parser and tests for roger@example.com in /Users/roger/project with ghp_deadbeefdeadbeefdead.

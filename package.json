@@ -18,7 +18,8 @@
     "check": "tsc --noEmit -p tsconfig.json",
     "test": "node --test dist/tests/*.test.js",
     "smoke": "npm run build && node dist/src/cli.js --help && node dist/src/cli.js examples/sample.txt --format markdown",
-    "validate": "bash scripts/validate.sh"
+    "validate": "bash scripts/validate.sh",
+    "package:smoke": "npm pack --dry-run"
   },
   "keywords": [
     "agent-skill",
@@ -30,5 +31,9 @@
   "devDependencies": {
     "@types/node": "^26.1.1",
     "typescript": "^5.5.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerchappel/skill-trace-sampler.git"
   }
 }

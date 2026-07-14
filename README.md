@@ -8,7 +8,7 @@ agent skills, regression tests, demos, and release-candidate evidence.
 ```bash
 npm install
 npm run build
-node dist/cli.js examples/sample.txt --format markdown
+node dist/src/cli.js examples/sample.txt --format markdown
 ```
 
 ## CLI
@@ -38,3 +38,14 @@ path patterns, but humans should still inspect outputs before publishing them.
 
 Sampling is deterministic and heuristic. It is meant to create useful fixtures,
 not to judge agent quality or reconstruct a full run.
+
+## Release Verification
+
+```bash
+npm run release:check
+npm pack --dry-run
+```
+
+The release check runs type checks, tests, CLI smoke coverage, fixture validation,
+and a package smoke that asserts the CLI, examples, docs, README, license,
+security policy, changelog, and contributor guide are present in the npm tarball.

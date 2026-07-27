@@ -17,6 +17,14 @@ test('rejects unsupported output formats', () => {
   assert.equal(result.stderr, 'error: --format must be one of: json, markdown\n');
 });
 
+test('rejects unknown options', () => {
+  const result = runCli(['examples/sample.txt', '--colour']);
+
+  assert.equal(result.status, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'error: unknown option "--colour"\n');
+});
+
 test('reports missing option values without consuming another option', () => {
   for (const args of [
     ['examples/sample.txt', '--format'],

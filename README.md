@@ -19,6 +19,10 @@ skill-trace-sampler run.log --format markdown --out samples.md
 skill-trace-sampler run.log --max-per-category 2
 ```
 
+Invalid options, missing option values, and unreadable input files exit with
+status 2 and print a concise `error:` message to stderr. Use `--help` to print
+the command synopsis.
+
 ## What It Extracts
 
 - command lines and tool-use mentions

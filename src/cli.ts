@@ -7,6 +7,17 @@ function usage(): string {
 `;
 }
 
+function fail(message: string): never {
+  process.stderr.write(`error: ${message}\n`);
+  process.exit(2);
+}
+
+function errorPath(error: unknown): string | undefined {
+  return typeof error === 'object' && error !== null && 'path' in error
+    ? String(error.path)
+    : undefined;
+}
+
 const args = process.argv.slice(2);
 if (args.includes('--help') || args.length === 0) {
   process.stdout.write(usage());
@@ -17,20 +28,54 @@ let format: 'json' | 'markdown' = 'json';
 let out: string | undefined;
 let maxPerCategory = 3;
 const paths: string[] = [];
+
+function optionValue(option: string, index: number): string {
+  const value = args[index + 1];
+  if (value === undefined || value.startsWith('--')) {
+    fail(`${option} requires a value`);
+  }
+  return value;
+}
+
 for (let i = 0; i < args.length; i += 1) {
   const arg = args[i];
-  if (arg === '--format') format = args[++i] as 'json' | 'markdown';
-  else if (arg === '--out') out = args[++i];
-  else if (arg === '--max-per-category') maxPerCategory = Number(args[++i]);
+  if (arg === '--format') {
+    const value = optionValue(arg, i);
+    if (value !== 'json' && value !== 'markdown') {
+      fail('--format must be one of: json, markdown');
+    }
+    format = value;
+    i += 1;
+  } else if (arg === '--out') {
+    out = optionValue(arg, i);
+    i += 1;
+  } else if (arg === '--max-per-category') {
+    maxPerCategory = Number(optionValue(arg, i));
+    i += 1;
+  } else if (arg.startsWith('--')) fail(`unknown option ${JSON.stringify(arg)}`);
   else paths.push(arg);
 }
 
-if (!paths.length || !Number.isInteger(maxPerCategory) || maxPerCategory < 1) {
-  process.stderr.write(usage());
-  process.exit(2);
+if (!paths.length) fail('at least one transcript path is required');
+if (!Number.isInteger(maxPerCategory) || maxPerCategory < 1) {
+  fail('--max-per-category must be a positive integer');
 }
 
-const report = await sampleTrace(paths, { maxPerCategory, now: new Date(0).toISOString() });
+let report;
+try {
+  report = await sampleTrace(paths, { maxPerCategory, now: new Date(0).toISOString() });
+} catch (error) {
+  const path = errorPath(error);
+  fail(path ? `unable to read input ${JSON.stringify(path)}` : 'unable to process transcripts');
+}
+
 const rendered = format === 'markdown' ? toMarkdown(report) : toJson(report);
-if (out) await writeFile(out, rendered, 'utf8');
-else process.stdout.write(rendered);
+if (out) {
+  try {
+    await writeFile(out, rendered, 'utf8');
+  } catch (error) {
+    fail(`unable to write output ${JSON.stringify(errorPath(error) ?? out)}`);
+  }
+} else {
+  process.stdout.write(rendered);
+}

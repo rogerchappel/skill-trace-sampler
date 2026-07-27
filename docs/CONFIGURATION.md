@@ -6,4 +6,8 @@ V1 is flag-driven so fixture generation remains explicit in automation.
 - `--out <path>` writes a reviewed sample pack.
 - `--max-per-category <n>` caps transcript excerpts per category.
 
+`--format` accepts only `json` or `markdown`, and `--max-per-category` must be a
+positive integer. Invalid or incomplete options exit with status 2. Input and
+output file errors use the same status and do not expose internal stack traces.
+
 Keep raw transcripts outside public repos. Commit only reviewed output.

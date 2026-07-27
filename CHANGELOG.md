@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Made source labels deterministic and unambiguous when input basenames collide.
 - Made CLI argument and file errors deterministic, concise, and script-friendly.
 
 ## 0.1.0

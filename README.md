@@ -43,7 +43,9 @@ the command synopsis.
 
 The tool is local-only. It reads only paths passed on the command line and never
 executes commands found in a transcript. It redacts common token, email, and home
-path patterns, but humans should still inspect outputs before publishing them.
+path patterns, including POSIX `/Users/<name>` and `/home/<name>` paths and
+Windows `C:\\Users\\<name>` or normalized `C:/Users/<name>` paths. Humans should
+still inspect outputs before publishing them.
 
 ## Limitations
 

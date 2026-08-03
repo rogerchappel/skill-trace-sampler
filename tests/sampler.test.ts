@@ -16,6 +16,31 @@ test('samples and redacts transcript evidence', async () => {
   assert.match(toMarkdown(report), /Skill Trace Samples/);
 });
 
+test('redacts Windows home paths throughout sampled reports', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'skill-trace-sampler-'));
+  const transcript = join(directory, 'windows.log');
+
+  try {
+    await writeFile(transcript, [
+      String.raw`Updated C:\Users\Alice\secret-client\src\index.ts`,
+      'Build passed from C:/Users/Bob/secret-client'
+    ].join('\n'));
+
+    const report = await sampleTrace([transcript], { now: '2026-08-03T09:27:00.000Z' });
+
+    assert.deepEqual(report.redactions, ['home-path']);
+    assert.deepEqual(report.samples.map((sample) => sample.text), [
+      String.raw`Updated [REDACTED_HOME]\secret-client\src\index.ts`,
+      'Build passed from [REDACTED_HOME]/secret-client'
+    ]);
+    assert.doesNotMatch(JSON.stringify(report), /Users[\\/]Alice|Users[\\/]Bob/);
+    assert.match(toMarkdown(report), /Redactions: home-path/);
+    assert.doesNotMatch(toMarkdown(report), /Users[\\/]Alice|Users[\\/]Bob/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test('uses unambiguous source labels throughout reports', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'skill-trace-sampler-'));
   const first = join(directory, 'trace-a', 'run.log');

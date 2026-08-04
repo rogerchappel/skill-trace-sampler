@@ -16,5 +16,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # Keep this separate from release:check so a clean checkout proves the
+      # standalone test command builds and discovers the complete suite.
+      - run: npm test
       - run: npm run release:check
-

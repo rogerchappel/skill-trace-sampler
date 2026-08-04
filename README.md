@@ -32,8 +32,9 @@ the command synopsis.
 
 ## What It Extracts
 
-- command lines and tool-use mentions
-- edited file paths
+- command lines and tool-use mentions (command tokens are case-insensitive)
+- edited file paths using relative or absolute POSIX (`/`, `./`, `../`) and
+  Windows (`\\`, `.\\`, `..\\`, drive-letter) forms
 - approval and consent boundaries
 - blocker or failure lines
 - verification evidence

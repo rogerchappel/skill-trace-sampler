@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Recognize command tokens case-insensitively and sample POSIX and Windows file paths.
 - Made source labels deterministic and unambiguous when input basenames collide.
 - Made CLI argument and file errors deterministic, concise, and script-friendly.
 

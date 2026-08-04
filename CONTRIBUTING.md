@@ -21,9 +21,11 @@ npm run validate
 npm run package:smoke
 ```
 
+`npm test` is safe to run immediately after installation: it builds the
+TypeScript sources before discovering and running the compiled test suite.
+
 ## Fixture Guidelines
 
 - Keep transcript examples synthetic.
 - Redact tokens, account IDs, emails, home paths, and private repository names.
 - Prefer small fixtures that demonstrate one sampling behavior at a time.
-

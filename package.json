@@ -20,11 +20,12 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
     "check": "tsc --noEmit -p tsconfig.json",
     "test": "npm run build && node --test dist/tests/*.test.js",
     "smoke": "npm run build && node dist/src/cli.js --help && node dist/src/cli.js examples/sample.txt --format markdown",
     "validate": "bash scripts/validate.sh",
-    "package:smoke": "npm run build && node scripts/package-smoke.mjs",
+    "package:smoke": "node scripts/package-smoke.mjs",
     "release:check": "npm run check && npm run build && npm test && npm run smoke && npm run validate && npm run package:smoke",
     "lint": "npm run check"
   },

@@ -9,6 +9,31 @@ function runCli(args: string[]) {
   });
 }
 
+test('prints usage when help is the only argument', () => {
+  const result = runCli(['--help']);
+
+  assert.equal(result.status, 0);
+  assert.equal(
+    result.stdout,
+    'skill-trace-sampler <transcript...> [--format json|markdown] [--out path] [--max-per-category n]\n'
+  );
+  assert.equal(result.stderr, '');
+});
+
+test('rejects help combined with other arguments', () => {
+  for (const args of [
+    ['--help', '--unknown'],
+    ['--unknown', '--help'],
+    ['examples/sample.txt', '--help']
+  ]) {
+    const result = runCli(args);
+
+    assert.equal(result.status, 2, args.join(' '));
+    assert.equal(result.stdout, '', args.join(' '));
+    assert.equal(result.stderr, 'error: --help must be used alone\n', args.join(' '));
+  }
+});
+
 test('rejects unsupported output formats', () => {
   const result = runCli(['examples/sample.txt', '--format', 'yaml']);
 

@@ -15,7 +15,8 @@ test('prints usage when help is the only argument', () => {
   assert.equal(result.status, 0);
   assert.equal(
     result.stdout,
-    'skill-trace-sampler <transcript...> [--format json|markdown] [--out path] [--max-per-category n]\n'
+    'skill-trace-sampler <transcript...> [--format json|markdown] [--out path] [--max-per-category n]\n' +
+      'skill-trace-sampler --help\n'
   );
   assert.equal(result.stderr, '');
 });

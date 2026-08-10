@@ -4,6 +4,7 @@ import { sampleTrace, toJson, toMarkdown } from './index.js';
 
 function usage(): string {
   return `skill-trace-sampler <transcript...> [--format json|markdown] [--out path] [--max-per-category n]
+skill-trace-sampler --help
 `;
 }
 

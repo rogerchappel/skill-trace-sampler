@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { join, resolve } from "node:path";
 
 const projectRoot = resolve(import.meta.dirname, "..");
 const temporaryRoot = mkdtempSync(join(tmpdir(), "skill-trace-sampler-package-"));
@@ -12,15 +12,27 @@ mkdirSync(sourceRoot);
 mkdirSync(consumerRoot);
 
 try {
-  const trackedFiles = execFileSync("git", ["ls-files", "-z"], {
-    cwd: projectRoot,
-    encoding: "utf8"
-  }).split("\0").filter(Boolean);
+  const sourceEntries = [
+    "src",
+    "tests",
+    "scripts",
+    "docs",
+    "examples",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "README.md",
+    "SKILL.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md"
+  ];
 
-  for (const relativePath of trackedFiles) {
-    const destination = join(sourceRoot, relativePath);
-    mkdirSync(dirname(destination), { recursive: true });
-    cpSync(join(projectRoot, relativePath), destination);
+  for (const relativePath of sourceEntries) {
+    cpSync(join(projectRoot, relativePath), join(sourceRoot, relativePath), {
+      recursive: true
+    });
   }
 
   execFileSync("npm", ["ci"], { cwd: sourceRoot, stdio: "inherit" });

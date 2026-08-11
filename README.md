@@ -27,8 +27,9 @@ a basename, reports use the shortest unique path suffix (for example,
 and Markdown output without unnecessarily exposing full absolute paths.
 
 Invalid options, missing option values, and unreadable input files exit with
-status 2 and print a concise `error:` message to stderr. Use `--help` to print
-the command synopsis.
+status 2 and print a concise `error:` message to stderr. Use `--help` by itself
+to print the command synopsis; combining it with an option or input also exits
+with status 2.
 
 ## What It Extracts
 

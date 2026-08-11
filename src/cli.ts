@@ -4,6 +4,7 @@ import { sampleTrace, toJson, toMarkdown } from './index.js';
 
 function usage(): string {
   return `skill-trace-sampler <transcript...> [--format json|markdown] [--out path] [--max-per-category n]
+skill-trace-sampler --help
 `;
 }
 
@@ -19,7 +20,10 @@ function errorPath(error: unknown): string | undefined {
 }
 
 const args = process.argv.slice(2);
-if (args.includes('--help') || args.length === 0) {
+if (args.includes('--help') && args.length > 1) {
+  fail('--help must be used alone');
+}
+if (args.length === 0 || args[0] === '--help') {
   process.stdout.write(usage());
   process.exit(0);
 }

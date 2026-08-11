@@ -63,5 +63,6 @@ npm pack --dry-run
 The release check runs type checks, tests, CLI smoke coverage, fixture validation,
 and a package smoke that installs dependencies in a clean source copy, runs
 `npm pack`, installs the resulting tarball, and exercises the installed CLI bin.
+It does not require Git metadata, so it also works from a GitHub source archive.
 The `prepack` lifecycle builds `dist`, so a separate manual build is not required
 before `npm pack` or `npm publish`.

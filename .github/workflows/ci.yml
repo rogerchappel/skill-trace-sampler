@@ -20,3 +20,10 @@ jobs:
       # standalone test command builds and discovers the complete suite.
       - run: npm test
       - run: npm run release:check
+      - name: Verify release from source export
+        run: |
+          export_root="$(mktemp -d)"
+          git archive HEAD | tar -x -C "$export_root"
+          cd "$export_root"
+          npm install --ignore-scripts
+          npm run release:check

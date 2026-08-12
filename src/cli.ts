@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { sampleTrace, toJson, toMarkdown } from './index.js';
 
 function usage(): string {
@@ -63,6 +64,9 @@ for (let i = 0; i < args.length; i += 1) {
 if (!paths.length) fail('at least one transcript path is required');
 if (!Number.isInteger(maxPerCategory) || maxPerCategory < 1) {
   fail('--max-per-category must be a positive integer');
+}
+if (out && paths.some((path) => resolve(path) === resolve(out))) {
+  fail(`output path must not match an input path ${JSON.stringify(out)}`);
 }
 
 let report;

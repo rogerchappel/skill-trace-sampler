@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, relative, resolve } from 'node:path';
 
 function runCli(args: string[]) {
   return spawnSync(process.execPath, ['dist/src/cli.js', ...args], {
@@ -74,4 +77,52 @@ test('reports unreadable input files without an internal stack trace', () => {
   assert.equal(result.stdout, '');
   assert.equal(result.stderr, 'error: unable to read input "does-not-exist.txt"\n');
   assert.doesNotMatch(result.stderr, /\n\s+at /);
+});
+
+test('rejects an output path that is also an input without modifying it', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'skill-trace-sampler-cli-'));
+  const input = join(directory, 'input.log');
+  const original = 'npm test\n';
+  writeFileSync(input, original);
+
+  const result = runCli([input, '--out', input]);
+
+  assert.equal(result.status, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, `error: output path must not match an input path ${JSON.stringify(input)}\n`);
+  assert.equal(readFileSync(input, 'utf8'), original);
+});
+
+test('rejects normalized input and output path collisions without modifying the input', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'skill-trace-sampler-cli-'));
+  const input = join(directory, 'input.log');
+  const original = 'npm test\n';
+  writeFileSync(input, original);
+
+  const relativeInput = relative(process.cwd(), input);
+  const equivalentOutput = join(relativeInput, '..', 'input.log');
+  const result = runCli([relativeInput, '--out', equivalentOutput]);
+
+  assert.equal(result.status, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(
+    result.stderr,
+    `error: output path must not match an input path ${JSON.stringify(equivalentOutput)}\n`
+  );
+  assert.equal(readFileSync(input, 'utf8'), original);
+});
+
+test('writes a report when the output path is distinct from every input', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'skill-trace-sampler-cli-'));
+  const input = join(directory, 'input.log');
+  const output = join(directory, 'report.json');
+  writeFileSync(input, 'npm test\n');
+
+  const result = runCli([input, '--out', output]);
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, '');
+  assert.equal(JSON.parse(readFileSync(output, 'utf8')).sources[0], 'input.log');
+  assert.notEqual(resolve(input), resolve(output));
 });

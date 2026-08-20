@@ -126,3 +126,20 @@ test('writes a report when the output path is distinct from every input', () => 
   assert.equal(JSON.parse(readFileSync(output, 'utf8')).sources[0], 'input.log');
   assert.notEqual(resolve(input), resolve(output));
 });
+
+test('reports failure collisions as blockers in JSON output', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'skill-trace-sampler-cli-'));
+  const input = join(directory, 'failures.log');
+  writeFileSync(input, 'Build failed after npm test\nPermission denied while publishing\n');
+
+  const result = runCli([input, '--format', 'json']);
+
+  assert.equal(result.status, 0);
+  assert.deepEqual(
+    JSON.parse(result.stdout).samples.map(({ category, line }: { category: string; line: number }) => ({ category, line })),
+    [
+      { category: 'blocker', line: 1 },
+      { category: 'blocker', line: 2 }
+    ]
+  );
+});

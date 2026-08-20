@@ -73,3 +73,19 @@ test('preserves category precedence in rendered reports', () => {
   assert.match(toMarkdown(report), /\*\*verification\*\* mixed\.log:1 - NPM test src\\index\.ts/);
   assert.doesNotMatch(toMarkdown(report), /\*\*(?:command|file)\*\* mixed\.log:1/);
 });
+
+test('prioritizes blockers over incidental verification and approval terms', () => {
+  const parsed = parseTranscript('failures.log', [
+    'Build failed after npm test',
+    'Permission denied while publishing',
+    'Build passed after npm test',
+    'Permission approval confirmed'
+  ].join('\n'), 10);
+
+  assert.deepEqual(parsed.samples.map(({ category, line }) => ({ category, line })), [
+    { category: 'blocker', line: 1 },
+    { category: 'blocker', line: 2 },
+    { category: 'verification', line: 3 },
+    { category: 'approval', line: 4 }
+  ]);
+});

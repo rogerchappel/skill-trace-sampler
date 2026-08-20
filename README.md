@@ -45,6 +45,11 @@ spellings exit with status 2 before any input is modified.
 - verification evidence
 - final implementation claims
 
+Explicit blocker terms (`blocked`, `failed`, `error`, `cannot`, `timeout`, or
+`denied`) take precedence when the same line also mentions a command,
+verification step, permission, or approval. Successful verification and
+affirmative approval lines keep their respective categories.
+
 ## Safety Notes
 
 The tool is local-only. It reads only paths passed on the command line and never

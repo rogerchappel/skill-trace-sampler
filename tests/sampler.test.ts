@@ -71,3 +71,28 @@ test('uses unambiguous source labels throughout reports', async () => {
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test('applies category caps across the combined report in input order', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'skill-trace-sampler-'));
+  const first = join(directory, 'first.log');
+  const second = join(directory, 'second.log');
+
+  try {
+    await writeFile(first, 'npm test passed for /Users/Alice/project\n');
+    await writeFile(second, 'Build passed\n');
+
+    const report = await sampleTrace([first, second], { maxPerCategory: 1 });
+
+    assert.equal(report.sampleCount, 1);
+    assert.deepEqual(report.samples.map(({ category, source }) => ({ category, source })), [
+      { category: 'verification', source: 'first.log' }
+    ]);
+    assert.deepEqual(report.redactions, ['home-path']);
+    assert.deepEqual(report.warnings, [
+      'first.log: no approval boundary sample found',
+      'second.log: no approval boundary sample found'
+    ]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});

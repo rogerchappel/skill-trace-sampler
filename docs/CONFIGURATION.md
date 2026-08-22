@@ -4,7 +4,8 @@ V1 is flag-driven so fixture generation remains explicit in automation.
 
 - `--format json|markdown` selects deterministic output.
 - `--out <path>` writes a reviewed sample pack.
-- `--max-per-category <n>` caps transcript excerpts per category.
+- `--max-per-category <n>` caps transcript excerpts per category across the
+  combined report. Inputs and lines are considered in their supplied order.
 
 `--format` accepts only `json` or `markdown`, and `--max-per-category` must be a
 positive integer. Invalid or incomplete options exit with status 2. Input and

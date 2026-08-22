@@ -20,6 +20,9 @@ skill-trace-sampler run.log --format markdown --out samples.md
 skill-trace-sampler run.log --max-per-category 2
 ```
 
+`--max-per-category` sets one report-wide cap for each category across all input
+transcripts. When the cap is reached, earlier inputs and lines take precedence.
+
 Source labels use the basename when it is unique. If multiple input paths share
 a basename, reports use the shortest unique path suffix (for example,
 `build/run.log` and `test/run.log`). Repeated identical paths receive stable

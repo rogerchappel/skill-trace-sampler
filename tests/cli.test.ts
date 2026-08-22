@@ -143,3 +143,20 @@ test('reports failure collisions as blockers in JSON output', () => {
     ]
   );
 });
+
+test('caps each category across all input transcripts', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'skill-trace-sampler-cli-'));
+  const first = join(directory, 'first.log');
+  const second = join(directory, 'second.log');
+  writeFileSync(first, 'npm test passed\n');
+  writeFileSync(second, 'Build passed\n');
+
+  const result = runCli([first, second, '--max-per-category', '1', '--format', 'json']);
+
+  assert.equal(result.status, 0);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.sampleCount, 1);
+  assert.deepEqual(report.samples.map(({ category, source }: { category: string; source: string }) => ({ category, source })), [
+    { category: 'verification', source: 'first.log' }
+  ]);
+});

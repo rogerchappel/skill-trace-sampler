@@ -11,9 +11,14 @@ const RULES: Array<[SampleCategory, RegExp]> = [
   ['claim', new RegExp('\\b(?:done|implemented|fixed|created|updated|summary)\\b', 'i')]
 ];
 
-export function parseTranscript(source: string, text: string, maxPerCategory: number): { samples: TraceSample[]; redactions: string[]; warnings: string[] } {
-  const counts = new Map<SampleCategory, number>();
+export function parseTranscript(
+  source: string,
+  text: string,
+  maxPerCategory: number,
+  counts = new Map<SampleCategory, number>()
+): { samples: TraceSample[]; redactions: string[]; warnings: string[] } {
   const redactions = new Set<string>();
+  const matchedCategories = new Set<SampleCategory>();
   const warnings: string[] = [];
   const samples: TraceSample[] = [];
   const lines = text.split(/\r?\n/);
@@ -25,6 +30,7 @@ export function parseTranscript(source: string, text: string, maxPerCategory: nu
     redacted.notes.forEach((note) => redactions.add(note));
     for (const [category, pattern] of RULES) {
       if (!pattern.test(redacted.text)) continue;
+      matchedCategories.add(category);
       const current = counts.get(category) ?? 0;
       if (current >= maxPerCategory) continue;
       counts.set(category, current + 1);
@@ -33,7 +39,7 @@ export function parseTranscript(source: string, text: string, maxPerCategory: nu
     }
   });
 
-  if (!samples.some((sample) => sample.category === 'verification')) warnings.push('no verification sample found');
-  if (!samples.some((sample) => sample.category === 'approval')) warnings.push('no approval boundary sample found');
+  if (!matchedCategories.has('verification')) warnings.push('no verification sample found');
+  if (!matchedCategories.has('approval')) warnings.push('no approval boundary sample found');
   return { samples, redactions: [...redactions].sort(), warnings };
 }

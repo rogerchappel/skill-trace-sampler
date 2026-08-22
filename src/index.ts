@@ -1,19 +1,20 @@
 import { readFile } from 'node:fs/promises';
 import { parseTranscript } from './parser.js';
 import { createSourceLabels } from './source-labels.js';
-import type { SamplerOptions, TraceReport } from './types.js';
+import type { SampleCategory, SamplerOptions, TraceReport } from './types.js';
 
 export async function sampleTrace(paths: string[], options: Partial<SamplerOptions> = {}): Promise<TraceReport> {
   const maxPerCategory = options.maxPerCategory ?? 3;
   const allSamples = [];
   const redactions = new Set<string>();
   const warnings = new Set<string>();
+  const categoryCounts = new Map<SampleCategory, number>();
   const sources = createSourceLabels(paths);
 
   for (const [index, path] of paths.entries()) {
     const source = sources[index];
     const text = await readFile(path, 'utf8');
-    const parsed = parseTranscript(source, text, maxPerCategory);
+    const parsed = parseTranscript(source, text, maxPerCategory, categoryCounts);
     allSamples.push(...parsed.samples);
     parsed.redactions.forEach((note) => redactions.add(note));
     parsed.warnings.forEach((warning) => warnings.add(`${source}: ${warning}`));

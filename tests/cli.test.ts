@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 
@@ -68,6 +68,27 @@ test('reports missing option values without consuming another option', () => {
     assert.match(result.stderr, /^error: --[\w-]+ requires a value\n$/, args.join(' '));
     assert.doesNotMatch(result.stderr, /\n\s+at /, args.join(' '));
   }
+});
+
+test('rejects repeated scalar options before producing output', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'skill-trace-sampler-cli-'));
+  const output = join(directory, 'report.md');
+  const otherOutput = join(directory, 'other.md');
+  const cases = [
+    { option: '--format', args: ['--format', 'json', '--format', 'markdown'] },
+    { option: '--out', args: ['--out', output, '--out', otherOutput] },
+    { option: '--max-per-category', args: ['--max-per-category', '1', '--max-per-category', '2'] }
+  ];
+
+  for (const { option, args } of cases) {
+    const result = runCli(['examples/sample.txt', ...args]);
+
+    assert.equal(result.status, 2, option);
+    assert.equal(result.stdout, '', option);
+    assert.equal(result.stderr, `error: ${option} may only be specified once\n`, option);
+  }
+  assert.equal(existsSync(output), false);
+  assert.equal(existsSync(otherOutput), false);
 });
 
 test('reports unreadable input files without an internal stack trace', () => {

@@ -34,6 +34,10 @@ status 2 and print a concise `error:` message to stderr. Use `--help` by itself
 to print the command synopsis; combining it with an option or input also exits
 with status 2.
 
+Each scalar option (`--format`, `--out`, and `--max-per-category`) may appear
+only once. Repeating one exits with status 2 before a report is printed or
+written.
+
 To prevent accidental transcript loss, `--out` must resolve to a path distinct
 from every input path. Direct matches and equivalent relative or absolute path
 spellings exit with status 2 before any input is modified.

@@ -33,6 +33,14 @@ let format: 'json' | 'markdown' = 'json';
 let out: string | undefined;
 let maxPerCategory = 3;
 const paths: string[] = [];
+const seenScalarOptions = new Set<string>();
+
+function acceptScalarOption(option: string): void {
+  if (seenScalarOptions.has(option)) {
+    fail(`${option} may only be specified once`);
+  }
+  seenScalarOptions.add(option);
+}
 
 function optionValue(option: string, index: number): string {
   const value = args[index + 1];
@@ -45,6 +53,7 @@ function optionValue(option: string, index: number): string {
 for (let i = 0; i < args.length; i += 1) {
   const arg = args[i];
   if (arg === '--format') {
+    acceptScalarOption(arg);
     const value = optionValue(arg, i);
     if (value !== 'json' && value !== 'markdown') {
       fail('--format must be one of: json, markdown');
@@ -52,9 +61,11 @@ for (let i = 0; i < args.length; i += 1) {
     format = value;
     i += 1;
   } else if (arg === '--out') {
+    acceptScalarOption(arg);
     out = optionValue(arg, i);
     i += 1;
   } else if (arg === '--max-per-category') {
+    acceptScalarOption(arg);
     maxPerCategory = Number(optionValue(arg, i));
     i += 1;
   } else if (arg.startsWith('--')) fail(`unknown option ${JSON.stringify(arg)}`);

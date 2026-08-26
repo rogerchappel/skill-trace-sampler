@@ -23,6 +23,10 @@ skill-trace-sampler run.log --max-per-category 2
 `--max-per-category` sets one report-wide cap for each category across all input
 transcripts. When the cap is reached, earlier inputs and lines take precedence.
 
+JSON and Markdown reports set `generatedAt` to the current CLI invocation time
+in ISO 8601 format. Library callers may pass `now` to `sampleTrace` when they
+need a controlled timestamp for deterministic output or tests.
+
 Source labels use the basename when it is unique. If multiple input paths share
 a basename, reports use the shortest unique path suffix (for example,
 `build/run.log` and `test/run.log`). Repeated identical paths receive stable

@@ -165,6 +165,17 @@ test('reports failure collisions as blockers in JSON output', () => {
   );
 });
 
+test('dates JSON reports with the current CLI invocation time', () => {
+  const before = Date.now();
+  const result = runCli(['examples/sample.txt', '--format', 'json']);
+  const after = Date.now();
+
+  assert.equal(result.status, 0);
+  const generatedAt = Date.parse(JSON.parse(result.stdout).generatedAt);
+  assert.ok(generatedAt >= before, `expected ${generatedAt} to be at least ${before}`);
+  assert.ok(generatedAt <= after, `expected ${generatedAt} to be at most ${after}`);
+});
+
 test('caps each category across all input transcripts', () => {
   const directory = mkdtempSync(join(tmpdir(), 'skill-trace-sampler-cli-'));
   const first = join(directory, 'first.log');

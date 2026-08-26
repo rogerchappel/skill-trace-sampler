@@ -82,7 +82,7 @@ if (out && paths.some((path) => resolve(path) === resolve(out))) {
 
 let report;
 try {
-  report = await sampleTrace(paths, { maxPerCategory, now: new Date(0).toISOString() });
+  report = await sampleTrace(paths, { maxPerCategory, now: new Date().toISOString() });
 } catch (error) {
   const path = errorPath(error);
   fail(path ? `unable to read input ${JSON.stringify(path)}` : 'unable to process transcripts');

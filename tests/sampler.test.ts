@@ -16,6 +16,29 @@ test('samples and redacts transcript evidence', async () => {
   assert.match(toMarkdown(report), /Skill Trace Samples/);
 });
 
+test('renders report-derived values as literal Markdown text', () => {
+  const markdown = toMarkdown({
+    sources: ['<source>.log', '[secondary].log'],
+    generatedAt: '2026-09-01T00:00:00.000Z',
+    sampleCount: 1,
+    samples: [{
+      category: 'verification',
+      line: 7,
+      source: '<source>.log',
+      text: 'npm test emitted <details open><summary>raw</summary>body</details> and *emphasis* [link](https://example.test)'
+    }],
+    redactions: ['token_<rule>'],
+    warnings: ['<source>.log: **review** [warning](https://example.test)']
+  });
+
+  assert.doesNotMatch(markdown, /<\/?(?:details|summary)(?:\s[^>]*)?>/);
+  assert.doesNotMatch(markdown, /\*emphasis\*|\*\*review\*\*|\[link\]\(|\[warning\]\(/);
+  assert.match(markdown, /&lt;details open&gt;&lt;summary&gt;raw&lt;\/summary&gt;body&lt;\/details&gt;/);
+  assert.match(markdown, /\\\*emphasis\\\* \\\[link\\\]\(https:\/\/example\.test\)/);
+  assert.match(markdown, /Sources: &lt;source&gt;\.log, \\\[secondary\\\]\.log/);
+  assert.match(markdown, /Redactions: token\\_&lt;rule&gt;/);
+});
+
 test('redacts Windows home paths throughout sampled reports', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'skill-trace-sampler-'));
   const transcript = join(directory, 'windows.log');

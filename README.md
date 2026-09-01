@@ -32,6 +32,10 @@ a basename, reports use the shortest unique path suffix (for example,
 `build/run.log` and `test/run.log`). Repeated identical paths receive stable
 `#1`, `#2` suffixes. The same labels appear in source lists, samples, warnings,
 and Markdown output without unnecessarily exposing full absolute paths.
+Markdown output renders source labels, warnings, redaction names, and sampled
+transcript text literally: raw HTML is entity-escaped and Markdown emphasis,
+code, and link delimiters are escaped. JSON output retains the redacted source
+values without Markdown-specific escaping.
 
 Invalid options, missing option values, and unreadable input files exit with
 status 2 and print a concise `error:` message to stderr. Use `--help` by itself

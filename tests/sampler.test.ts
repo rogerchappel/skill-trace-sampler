@@ -64,6 +64,33 @@ test('redacts Windows home paths throughout sampled reports', async () => {
   }
 });
 
+test('redacts canonical macOS and file URL home paths throughout sampled reports', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'skill-trace-sampler-'));
+  const transcript = join(directory, 'macos.log');
+
+  try {
+    await writeFile(transcript, [
+      'Updated /private/Users/Alice/secret-client/src/index.ts',
+      'Build passed from file:///Users/Bob/secret-client'
+    ].join('\n'));
+
+    const report = await sampleTrace([transcript], { now: '2026-09-08T13:09:00.000Z' });
+
+    assert.deepEqual(report.redactions, ['home-path']);
+    assert.deepEqual(report.samples.map((sample) => sample.text), [
+      'Updated /private/[REDACTED_HOME]/secret-client/src/index.ts',
+      'Build passed from file://[REDACTED_HOME]/secret-client'
+    ]);
+    const serialized = JSON.stringify(report);
+    const markdown = toMarkdown(report);
+    assert.doesNotMatch(serialized, /Users[\/]Alice|Users[\/]Bob/);
+    assert.doesNotMatch(markdown, /Users[\/]Alice|Users[\/]Bob/);
+    assert.match(markdown, /Redactions: home-path/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test('uses unambiguous source labels throughout reports', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'skill-trace-sampler-'));
   const first = join(directory, 'trace-a', 'run.log');

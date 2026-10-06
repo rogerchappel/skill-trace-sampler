@@ -4,3 +4,4 @@ npm run check
 npm run build
 npm test
 npm run smoke
+npm run package:smoke

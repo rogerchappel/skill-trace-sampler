@@ -25,5 +25,5 @@ jobs:
           export_root="$(mktemp -d)"
           git archive HEAD | tar -x -C "$export_root"
           cd "$export_root"
-          npm install --ignore-scripts
+          npm ci --ignore-scripts
           npm run release:check

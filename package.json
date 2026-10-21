@@ -47,5 +47,8 @@
   "bugs": {
     "url": "https://github.com/rogerchappel/skill-trace-sampler/issues"
   },
-  "homepage": "https://github.com/rogerchappel/skill-trace-sampler#readme"
+  "homepage": "https://github.com/rogerchappel/skill-trace-sampler#readme",
+  "engines": {
+    "node": ">=20"
+  }
 }

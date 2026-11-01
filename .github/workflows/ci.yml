@@ -31,4 +31,5 @@ jobs:
           git archive HEAD | tar -x -C "$export_root"
           cd "$export_root"
           npm install --ignore-scripts
+          git diff --exit-code -- package-lock.json
           npm run release:check
